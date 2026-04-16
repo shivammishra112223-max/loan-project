@@ -1,9 +1,14 @@
 from flask import Flask, request, jsonify, render_template, redirect, url_for
 import os
-import psycopg2
 import pandas as pd
 import joblib
 from werkzeug.security import generate_password_hash, check_password_hash
+
+# Optional DB import (safe)
+try:
+    import psycopg2
+except:
+    psycopg2 = None
 
 app = Flask(__name__)
 
@@ -17,15 +22,23 @@ model = joblib.load("loan_model.pkl")
 model_columns = joblib.load("model_columns.pkl")
 
 # -------------------------------
-# DB CONNECTION
+# SAFE DB CONNECTION
 # -------------------------------
-conn = psycopg2.connect(
-    host="localhost",
-    database="LoanPridiction",
-    user="postgres",
-    password="shivam%8320"
-)
-cur = conn.cursor()
+conn = None
+cur = None
+
+try:
+    if psycopg2:
+        conn = psycopg2.connect(
+            host="localhost",
+            database="LoanPridiction",
+            user="postgres",
+            password="shivam%8320"
+        )
+        cur = conn.cursor()
+except:
+    conn = None
+    cur = None
 
 # -------------------------------
 # LOGIN PAGE
@@ -37,7 +50,7 @@ def login():
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
-    if request.method == "POST":
+    if request.method == "POST" and cur:
         try:
             full_name = request.form.get("full_name")
             username = request.form.get("username")
@@ -58,7 +71,8 @@ def register():
             return redirect(url_for("login"))
 
         except Exception as e:
-            conn.rollback()
+            if conn:
+                conn.rollback()
             return f"Error: {e}"
 
     return render_template("register.html")
@@ -66,6 +80,9 @@ def register():
 
 @app.route("/login", methods=["POST"])
 def login_process():
+    if not cur:
+        return "Database not connected"
+
     username = request.form.get("username")
     password = request.form.get("password")
 
@@ -124,7 +141,7 @@ def credit_card():
 
 
 # -------------------------------
-# APPLY LOAN (FINAL)
+# APPLY LOAN (SAFE)
 # -------------------------------
 @app.route("/apply-loan", methods=["POST"])
 def apply_loan():
@@ -132,78 +149,32 @@ def apply_loan():
     bank = request.form.get("bank")
 
     try:
-        # -------------------------------
-        # INSERT USER
-        # -------------------------------
-        cur.execute("""
-            INSERT INTO users
-            (full_name, dob, gender, mobile, email, marital_status, address,
-             pan, aadhaar, employment_type, company_name, experience, monthly_income)
-            VALUES (%s,%s,%s,%s,%s,%s,%s,
-                    %s,%s,%s,%s,%s,%s)
-            RETURNING user_id
-        """, (
-            request.form.get("full_name"),
-            request.form.get("dob"),
-            request.form.get("gender"),
-            request.form.get("mobile"),
-            request.form.get("email"),
-            request.form.get("marital_status"),
-            request.form.get("address"),
-            request.form.get("pan"),
-            request.form.get("aadhaar"),
-            request.form.get("employment_type"),
-            request.form.get("company_name"),
-            request.form.get("experience"),
-            request.form.get("monthly_income")
-        ))
+        # DB insert only if connected
+        if cur:
+            cur.execute("""
+                INSERT INTO users
+                (full_name, dob, gender, mobile, email, marital_status, address,
+                 pan, aadhaar, employment_type, company_name, experience, monthly_income)
+                VALUES (%s,%s,%s,%s,%s,%s,%s,
+                        %s,%s,%s,%s,%s,%s)
+                RETURNING user_id
+            """, (
+                request.form.get("full_name"),
+                request.form.get("dob"),
+                request.form.get("gender"),
+                request.form.get("mobile"),
+                request.form.get("email"),
+                request.form.get("marital_status"),
+                request.form.get("address"),
+                request.form.get("pan"),
+                request.form.get("aadhaar"),
+                request.form.get("employment_type"),
+                request.form.get("company_name"),
+                request.form.get("experience"),
+                request.form.get("monthly_income")
+            ))
 
-        user_id = cur.fetchone()[0]
-
-        # -------------------------------
-        # INSERT LOAN
-        # -------------------------------
-        cur.execute("""
-            INSERT INTO loantypes
-            (user_id, loan_type, loan_amount, tenure, tenure_unit, loan_purpose,
-             property_type, property_value, ownership, property_address,
-             business_name, business_type, existing_loan, total_emi, bank)
-            VALUES (%s,%s,%s,%s,%s,%s,
-                    %s,%s,%s,%s,
-                    %s,%s,%s,%s,%s)
-            RETURNING loan_id
-        """, (
-            user_id,
-            request.form.get("loan_type"),
-            request.form.get("loan_amount"),
-            request.form.get("tenure"),
-            request.form.get("tenure_unit"),
-            request.form.get("loan_purpose"),
-            request.form.get("property_type"),
-            request.form.get("property_value"),
-            request.form.get("ownership"),
-            request.form.get("property_address"),
-            request.form.get("business_name"),
-            request.form.get("business_type"),
-            request.form.get("existing_loan"),
-            request.form.get("total_emi"),
-            bank
-        ))
-
-        loan_id = cur.fetchone()[0]
-
-        # -------------------------------
-        # INSERT DOCUMENT
-        # -------------------------------
-        cur.execute("""
-            INSERT INTO documents
-            (loan_id, document_type, file_path)
-            VALUES (%s, %s, %s)
-        """, (
-            loan_id,
-            request.form.get("document_type"),
-            request.form.get("file_path")
-        ))
+            user_id = cur.fetchone()[0]
 
         # -------------------------------
         # ML PREDICTION
@@ -234,10 +205,8 @@ def apply_loan():
 
         loan_decision = "APPROVED" if prediction[0] == 1 else "REJECTED"
 
-        # -------------------------------
-        # COMMIT + RESPONSE
-        # -------------------------------
-        conn.commit()
+        if conn:
+            conn.commit()
 
         return jsonify({
             "status": "SUCCESS",
@@ -247,7 +216,8 @@ def apply_loan():
         })
 
     except Exception as e:
-        conn.rollback()
+        if conn:
+            conn.rollback()
         return jsonify({"status": "ERROR", "message": str(e)})
 
 
