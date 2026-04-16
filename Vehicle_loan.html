@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Vehicle Loan Application</title>
+
+<link rel="icon" type="image/jpeg" href="vehicle_loan.jpeg">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+body{
+  font-family: Arial, sans-serif;
+  background:#f2f4f8;
+  padding:20px;
+}
+.container{
+  max-width:1100px;
+  background:#ffffff;
+  padding:25px;
+  border-radius:6px;
+  box-shadow:0 0 12px rgba(0,0,0,0.1);
+}
+h1{text-align:center;color:#2c3e50;}
+h2{
+  margin-top:25px;
+  background:#eef2f3;
+  padding:8px;
+  border-left:5px solid #2980b9;
+}
+.form-row{display:flex;gap:15px;margin-bottom:15px;}
+.form-group{flex:1;}
+label{font-weight:bold;}
+input,select,textarea{
+  width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;
+}
+button{
+  background:#2980b9;color:#fff;padding:12px 30px;border:none;
+  border-radius:4px;font-size:16px;
+}
+button:hover{background:#1f6690;}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<h1>Vehicle Loan Application Form</h1>
+
+<form action="http://127.0.0.1:5000/apply-loan"
+      method="POST"
+      enctype="multipart/form-data">
+
+<input type="hidden" name="loan_type" value="vehicle">
+<input type="hidden" name="tenure_unit" value="months">
+
+<!-- PERSONAL DETAILS -->
+<h2>Personal Details</h2>
+<div class="form-row">
+  <div class="form-group">
+    <label>Full Name</label>
+    <input type="text" name="full_name" required>
+  </div>
+  <div class="form-group">
+    <label>Gender</label>
+    <select name="gender" required>
+      <option>Male</option>
+      <option>Female</option>
+      <option>Other</option>
+    </select>
+  </div>
+</div>
+
+<div class="form-row">
+  <div class="form-group">
+    <label>Mobile Number</label>
+    <input type="tel" name="mobile" required>
+  </div>
+  <div class="form-group">
+    <label>Email</label>
+    <input type="email" name="email">
+  </div>
+  <div class="form-group">
+    <label>Marital Status</label>
+    <select name="marital_status">
+      <option>Single</option>
+      <option>Married</option>
+    </select>
+  </div>
+</div>
+
+<label>Residential Address</label>
+<textarea name="address" rows="2" required></textarea>
+
+<!-- BANK SELECTION -->
+<h2>Select Bank</h2>
+<div class="form-row">
+  <div class="form-group">
+    <label>Choose Bank</label>
+    <select name="bank_name" required>
+      <option value="">Select Bank</option>
+      <option>SBI</option>
+      <option>HDFC Bank</option>
+      <option>ICICI Bank</option>
+      <option>Axis Bank</option>
+      <option>Punjab National Bank (PNB)</option>
+    </select>
+  </div>
+</div>
+
+<!-- EMPLOYMENT -->
+<h2>Employment / Income Details</h2>
+<div class="form-row">
+  <div class="form-group">
+    <label>Employment Type</label>
+    <select name="employment_type">
+      <option>Salaried</option>
+      <option>Self Employed</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label>Company / Business Name</label>
+    <input type="text" name="company_name">
+  </div>
+</div>
+
+<div class="form-row">
+  <div class="form-group">
+    <label>Monthly Income (₹)</label>
+    <input type="number" name="monthly_income" required>
+  </div>
+  <div class="form-group">
+    <label>Experience (Years)</label>
+    <input type="number" name="experience">
+  </div>
+</div>
+
+<!-- VEHICLE DETAILS -->
+<h2>Vehicle Details</h2>
+<div class="form-row">
+  <div class="form-group">
+    <label>Vehicle Type</label>
+    <select name="vehicle_type">
+      <option>Two Wheeler</option>
+      <option>Car</option>
+      <option>Commercial Vehicle</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label>Vehicle Model</label>
+    <input type="text" name="vehicle_model">
+  </div>
+</div>
+
+<div class="form-row">
+  <div class="form-group">
+    <label>Dealer Name</label>
+    <input type="text" name="dealer_name">
+  </div>
+  <div class="form-group">
+    <label>On-Road Price (₹)</label>
+    <input type="number" name="onroad_price">
+  </div>
+</div>
+
+<!-- LOAN DETAILS -->
+<h2>Loan Details</h2>
+<div class="form-row">
+  <div class="form-group">
+    <label>Loan Amount Required (₹)</label>
+    <input type="number" name="loan_amount" required>
+  </div>
+  <div class="form-group">
+    <label>Loan Tenure (Months)</label>
+    <select name="tenure">
+      <option>12</option>
+      <option>24</option>
+      <option>36</option>
+      <option>48</option>
+      <option>60</option>
+    </select>
+  </div>
+</div>
+
+<div class="form-row">
+  <div class="form-group">
+    <label>Down Payment (₹)</label>
+    <input type="number" name="down_payment">
+  </div>
+  <div class="form-group">
+    <label>Repayment Mode</label>
+    <select name="repayment_mode">
+      <option>EMI</option>
+    </select>
+  </div>
+</div>
+
+<!-- EXISTING LOAN -->
+<h2>Existing Loan</h2>
+<div class="form-row">
+  <div class="form-group">
+    <label>Existing Loan?</label>
+    <select name="existing_loan">
+      <option>No</option>
+      <option>Yes</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label>Total EMI (₹)</label>
+    <input type="number" name="total_emi">
+  </div>
+</div>
+
+<!-- DOCUMENTS -->
+<h2>Document Upload</h2>
+<div class="form-row">
+  <div class="form-group">
+    <label>PAN Card</label>
+    <input type="file" name="pan_file" required>
+  </div>
+  <div class="form-group">
+    <label>Aadhaar Card</label>
+    <input type="file" name="aadhaar_file" required>
+  </div>
+</div>
+
+<div class="form-row">
+  <div class="form-group">
+    <label>Income Proof</label>
+    <input type="file" name="income_proof" required>
+  </div>
+  <div class="form-group">
+    <label>Vehicle Quotation</label>
+    <input type="file" name="vehicle_quotation" required>
+  </div>
+</div>
+
+<div class="col-md-4 mb-3">
+  <label>Select Bank</label>
+  <select name="bank" class="form-select" required>
+    <option value="">Select Bank</option>
+    <option value="SBI">State Bank of India</option>
+    <option value="HDFC">HDFC Bank</option>
+    <option value="ICICI">ICICI Bank</option>
+    <option value="AXIS">Axis Bank</option>
+  </select>
+</div>
+
+
+
+<div class="form-check mt-3">
+  <input type="checkbox" name="consent" value="yes" class="form-check-input" required>
+  <label class="form-check-label">
+    I authorize verification of my details and credit score.
+  </label>
+</div>
+
+<br>
+<button type="submit" class="w-100">
+  Submit Vehicle Loan Application
+</button>
+
+</form>
+</div>
+</body>
+</html>

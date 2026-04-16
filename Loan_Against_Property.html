@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Loan Against Property Application</title>
+
+<link rel="icon" type="image/jpeg" href="property_loan.jpeg">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+body{
+  font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+  background:#f2f4f7;
+  padding:20px;
+}
+.container{
+  max-width:1000px;
+  background:#fff;
+  padding:25px;
+  border-radius:8px;
+  box-shadow:0 0 12px rgba(0,0,0,0.1);
+}
+h1{text-align:center;color:#2c3e50;}
+h2{
+  background:#ecf0f1;
+  padding:8px;
+  border-left:4px solid #2980b9;
+  margin-top:30px;
+}
+.form-row{display:flex;gap:15px;margin-bottom:15px;}
+.form-group{flex:1;}
+label{font-weight:600;}
+input,select,textarea{
+  width:100%;
+  padding:8px;
+  border:1px solid #ccc;
+  border-radius:4px;
+}
+textarea{resize:none;}
+button{
+  background:#2980b9;
+  color:#fff;
+  border:none;
+  padding:12px;
+  font-size:16px;
+  border-radius:6px;
+  width:100%;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<h1>Loan Against Property (LAP) Application Form</h1>
+
+<form action="http://127.0.0.1:5000/apply-loan"
+      method="POST"
+      enctype="multipart/form-data">
+
+<!-- REQUIRED -->
+<input type="hidden" name="loan_type" value="property">
+<input type="hidden" name="tenure_unit" value="years">
+
+<!-- PERSONAL DETAILS -->
+<h2>Personal Details</h2>
+<div class="form-row">
+  <div class="form-group">
+    <label>Full Name</label>
+    <input type="text" name="full_name" required>
+  </div>
+  <div class="form-group">
+    <label>Date of Birth</label>
+    <input type="date" name="dob" required>
+  </div>
+  <div class="form-group">
+    <label>Gender</label>
+    <select name="gender">
+      <option>Male</option>
+      <option>Female</option>
+      <option>Other</option>
+    </select>
+  </div>
+</div>
+
+<div class="form-row">
+  <div class="form-group">
+    <label>Mobile Number</label>
+    <input type="tel"
+           name="mobile"
+           pattern="[6-9]{1}[0-9]{9}"
+           maxlength="10"
+           required>
+  </div>
+  <div class="form-group">
+    <label>Email</label>
+    <input type="email" name="email">
+  </div>
+  <div class="form-group">
+    <label>Marital Status</label>
+    <select name="marital_status">
+      <option>Single</option>
+      <option>Married</option>
+    </select>
+  </div>
+</div>
+
+<label>Residential Address</label>
+<textarea name="address" rows="2" required></textarea>
+
+<!-- KYC -->
+<h2>KYC Details</h2>
+<div class="form-row">
+  <div class="form-group">
+    <label>PAN Number</label>
+    <input type="text"
+           name="pan"
+           pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}"
+           placeholder="ABCDE1234F"
+           required>
+  </div>
+  <div class="form-group">
+    <label>Aadhaar Number</label>
+    <input type="text"
+           name="aadhaar"
+           pattern="[0-9]{12}"
+           maxlength="12"
+           required>
+  </div>
+</div>
+
+<!-- EMPLOYMENT -->
+<h2>Employment / Business Details</h2>
+<div class="form-row">
+  <div class="form-group">
+    <label>Employment Type</label>
+    <select name="employment_type">
+      <option>Salaried</option>
+      <option>Self Employed</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label>Company / Business Name</label>
+    <input type="text" name="company_name">
+  </div>
+</div>
+
+<div class="form-row">
+  <div class="form-group">
+    <label>Monthly Income / Turnover</label>
+    <input type="number" name="monthly_income" required>
+  </div>
+  <div class="form-group">
+    <label>Experience (Years)</label>
+    <input type="number" name="experience">
+  </div>
+</div>
+
+<!-- LOAN DETAILS -->
+<h2>Loan Details</h2>
+<div class="form-row">
+  <div class="form-group">
+    <label>Loan Amount (₹)</label>
+    <input type="number" name="loan_amount" required>
+  </div>
+  <div class="form-group">
+    <label>Loan Tenure (Years)</label>
+    <select name="tenure">
+      <option>5</option>
+      <option>10</option>
+      <option>15</option>
+      <option>20</option>
+    </select>
+  </div>
+</div>
+
+<label>Loan Purpose</label>
+<textarea name="loan_purpose" rows="2">Loan Against Property</textarea>
+
+<!-- PROPERTY DETAILS -->
+<h2>Property Details</h2>
+<div class="form-row">
+  <div class="form-group">
+    <label>Property Type</label>
+    <select name="property_type">
+      <option>Residential</option>
+      <option>Commercial</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label>Ownership</label>
+    <select name="ownership">
+      <option>Self</option>
+      <option>Joint</option>
+    </select>
+  </div>
+</div>
+
+<div class="form-row">
+  <div class="form-group">
+    <label>Property Value (₹)</label>
+    <input type="number" name="property_value" required>
+  </div>
+</div>
+
+<textarea name="property_address"
+          rows="2"
+          placeholder="Complete Property Address"
+          required></textarea>
+
+<!-- EXISTING LOAN -->
+<h2>Existing Loan Details</h2>
+<div class="form-row">
+  <div class="form-group">
+    <label>Any Existing Loan?</label>
+    <select name="existing_loan">
+      <option>No</option>
+      <option>Yes</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label>Total Monthly EMI</label>
+    <input type="number" name="total_emi">
+  </div>
+</div>
+
+<!-- DOCUMENTS -->
+<h2>Document Upload</h2>
+
+<input type="file" name="aadhaar_file" required>
+<input type="file" name="pan_file" required>
+<input type="file" name="income_proof" required>
+<input type="file" name="property_docs" required>
+
+
+<div class="col-md-4 mb-3">
+  <label>Select Bank</label>
+  <select name="bank" class="form-select" required>
+    <option value="">Select Bank</option>
+    <option value="SBI">State Bank of India</option>
+    <option value="HDFC">HDFC Bank</option>
+    <option value="ICICI">ICICI Bank</option>
+    <option value="AXIS">Axis Bank</option>
+  </select>
+</div>
+
+<!-- CONSENT -->
+<div class="form-check mt-4">
+  <input type="checkbox"
+         name="consent"
+         value="yes"
+         class="form-check-input"
+         required>
+  <label class="form-check-label">
+    I authorize the lender to verify my details and credit score.
+  </label>
+</div>
+
+<br>
+<button type="submit">Submit Loan Against Property Application</button>
+
+</form>
+
+</div>
+</body>
+</html>
