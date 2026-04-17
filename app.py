@@ -22,21 +22,28 @@ model = joblib.load("loan_model.pkl")
 model_columns = joblib.load("model_columns.pkl")
 
 # -------------------------------
-# SAFE DB CONNECTION
+# SAFE DB CONNECTION (FIXED)
 # -------------------------------
 conn = None
 cur = None
 
 try:
     if psycopg2:
-        conn = psycopg2.connect(
-            host="localhost",
-            database="LoanPridiction",
-            user="postgres",
-            password="shivam%8320"
-        )
-        cur = conn.cursor()
-except:
+        DATABASE_URL = os.environ.get("DATABASE_URL")
+
+        if DATABASE_URL:
+            # Render fix
+            if DATABASE_URL.startswith("postgres://"):
+                DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
+            conn = psycopg2.connect(DATABASE_URL)
+            cur = conn.cursor()
+            print("Database Connected Successfully")
+        else:
+            print("No DATABASE_URL found")
+
+except Exception as e:
+    print("DB Error:", e)
     conn = None
     cur = None
 
