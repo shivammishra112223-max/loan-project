@@ -32,18 +32,18 @@ try:
         DATABASE_URL = os.environ.get("DATABASE_URL")
 
         if DATABASE_URL:
-            # Render fix
             if DATABASE_URL.startswith("postgres://"):
                 DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
-            conn = psycopg2.connect(DATABASE_URL)
+            conn = psycopg2.connect(DATABASE_URL, sslmode='require')
             cur = conn.cursor()
-            print("Database Connected Successfully")
+
+            print("✅ Database Connected Successfully")
         else:
-            print("No DATABASE_URL found")
+            print("❌ No DATABASE_URL found")
 
 except Exception as e:
-    print("DB Error:", e)
+    print("❌ DB Error:", e)
     conn = None
     cur = None
 
@@ -69,7 +69,7 @@ def register():
             hashed_password = generate_password_hash(password)
 
             cur.execute("""
-                INSERT INTO Register_Users 
+                INSERT INTO register_users
                 (full_name, username, email, mobile, password, city)
                 VALUES (%s, %s, %s, %s, %s, %s)
             """, (full_name, username, email, mobile, hashed_password, city))
@@ -93,7 +93,7 @@ def login_process():
     username = request.form.get("username")
     password = request.form.get("password")
 
-    cur.execute("SELECT password FROM Register_Users WHERE username = %s", (username,))
+    cur.execute("SELECT password FROM register_users WHERE username = %s", (username,))
     user = cur.fetchone()
 
     if user and check_password_hash(user[0], password):
@@ -148,7 +148,7 @@ def credit_card():
 
 
 # -------------------------------
-# APPLY LOAN (SAFE)
+# APPLY LOAN
 # -------------------------------
 @app.route("/apply-loan", methods=["POST"])
 def apply_loan():
@@ -156,7 +156,6 @@ def apply_loan():
     bank = request.form.get("bank")
 
     try:
-        # DB insert only if connected
         if cur:
             cur.execute("""
                 INSERT INTO users
@@ -183,9 +182,7 @@ def apply_loan():
 
             user_id = cur.fetchone()[0]
 
-        # -------------------------------
-        # ML PREDICTION
-        # -------------------------------
+        # ML Prediction
         monthly_income = float(request.form.get("monthly_income", 0))
         loan_amount = float(request.form.get("loan_amount", 0))
         tenure = int(request.form.get("tenure", 0))
@@ -229,7 +226,8 @@ def apply_loan():
 
 
 # -------------------------------
-# RUN APP
+# RUN APP (FIXED FOR RENDER)
 # -------------------------------
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
