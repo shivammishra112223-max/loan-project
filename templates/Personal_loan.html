@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Personal Loan Application</title>
+
+<link rel="icon" type="image/jpeg" href="personal_loan.jpeg">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-light p-4">
+
+<div class="container">
+<div class="card shadow-lg">
+<div class="card-body">
+
+<h2 class="text-center mb-4">Personal Loan Application Form</h2>
+
+<form action="http://127.0.0.1:5000/apply-loan"
+      method="POST"
+      enctype="multipart/form-data">
+
+<!-- REQUIRED -->
+<input type="hidden" name="loan_type" value="personal">
+<input type="hidden" name="tenure_unit" value="months">
+
+<!-- PERSONAL DETAILS -->
+<h5>Personal Details</h5>
+<div class="row">
+  <div class="col-md-6 mb-3">
+    <label>Full Name</label>
+    <input type="text"
+           name="full_name"
+           class="form-control"
+           placeholder="Enter full name"
+           required>
+  </div>
+
+  <div class="col-md-3 mb-3">
+    <label>Date of Birth</label>
+    <input type="date" name="dob" class="form-control" required>
+  </div>
+
+  <div class="col-md-3 mb-3">
+    <label>Gender</label>
+    <select name="gender" class="form-select" required>
+      <option value="">Select</option>
+      <option>Male</option>
+      <option>Female</option>
+      <option>Other</option>
+    </select>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-4 mb-3">
+    <label>Mobile Number</label>
+    <input type="tel"
+           name="mobile"
+           class="form-control"
+           pattern="[6-9]{1}[0-9]{9}"
+           maxlength="10"
+           placeholder="10-digit mobile number"
+           required>
+  </div>
+
+  <div class="col-md-4 mb-3">
+    <label>Email</label>
+    <input type="email" name="email" class="form-control">
+  </div>
+
+  <div class="col-md-4 mb-3">
+    <label>Marital Status</label>
+    <select name="marital_status" class="form-select">
+      <option>Single</option>
+      <option>Married</option>
+    </select>
+  </div>
+</div>
+
+<label>Residential Address</label>
+<textarea name="address"
+          class="form-control mb-3"
+          rows="2"
+          required></textarea>
+
+<!-- KYC -->
+<h5>KYC Details</h5>
+<div class="row">
+  <div class="col-md-6 mb-3">
+    <label>PAN Number</label>
+    <input type="text"
+           name="pan"
+           class="form-control"
+           pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}"
+           placeholder="ABCDE1234F"
+           required>
+  </div>
+
+  <div class="col-md-6 mb-3">
+    <label>Aadhaar Number</label>
+    <input type="text"
+           name="aadhaar"
+           class="form-control"
+           pattern="[0-9]{12}"
+           maxlength="12"
+           placeholder="12-digit Aadhaar"
+           required>
+  </div>
+</div>
+
+<!-- EMPLOYMENT -->
+<h5>Employment Details</h5>
+<div class="row">
+  <div class="col-md-4 mb-3">
+    <label>Employment Type</label>
+    <select name="employment_type" class="form-select">
+      <option>Salaried</option>
+      <option>Self Employed</option>
+    </select>
+  </div>
+
+  <div class="col-md-4 mb-3">
+    <label>Company / Business Name</label>
+    <input type="text" name="company_name" class="form-control">
+  </div>
+
+  <div class="col-md-4 mb-3">
+    <label>Work Experience (Years)</label>
+    <input type="number" name="experience" class="form-control">
+  </div>
+</div>
+
+<label>Monthly Income (₹)</label>
+<input type="number"
+       name="monthly_income"
+       class="form-control mb-3"
+       required>
+
+<!-- LOAN DETAILS -->
+<h5>Loan Details</h5>
+<div class="row">
+  <div class="col-md-4 mb-3">
+    <label>Loan Amount Required (₹)</label>
+    <input type="number" name="loan_amount" class="form-control" required>
+  </div>
+
+  <div class="col-md-4 mb-3">
+    <label>Loan Tenure (Months)</label>
+    <select name="tenure" class="form-select">
+      <option>12</option>
+      <option>24</option>
+      <option>36</option>
+      <option>48</option>
+      <option>60</option>
+    </select>
+  </div>
+
+  <div class="col-md-4 mb-3">
+    <label>Loan Purpose</label>
+    <input type="text" name="loan_purpose" class="form-control">
+  </div>
+</div>
+
+<!-- EXISTING LOAN -->
+<h5>Existing Loan</h5>
+<div class="row">
+  <div class="col-md-6 mb-3">
+    <label>Any Existing Loan?</label>
+    <select name="existing_loan" class="form-select">
+      <option>No</option>
+      <option>Yes</option>
+    </select>
+  </div>
+
+  <div class="col-md-6 mb-3">
+    <label>Total Monthly EMI (₹)</label>
+    <input type="number" name="total_emi" class="form-control">
+  </div>
+</div>
+
+<!-- DOCUMENT UPLOAD -->
+<h5>Upload Documents</h5>
+
+<label>PAN Card</label>
+<input type="file"
+       name="pan_file"
+       class="form-control mb-2"
+       accept=".pdf,.jpg,.jpeg"
+       required>
+
+<label>Aadhaar Card</label>
+<input type="file"
+       name="aadhaar_file"
+       class="form-control mb-2"
+       accept=".pdf,.jpg,.jpeg"
+       required>
+
+<label>Income Proof (Salary Slip / Bank Statement)</label>
+<input type="file"
+       name="income_proof"
+       class="form-control mb-3"
+       accept=".pdf"
+       required>
+
+
+
+       <div class="col-md-4 mb-3">
+  <label>Select Bank</label>
+  <select name="bank" class="form-select" required>
+    <option value="">Select Bank</option>
+    <option value="SBI">State Bank of India</option>
+    <option value="HDFC">HDFC Bank</option>
+    <option value="ICICI">ICICI Bank</option>
+    <option value="AXIS">Axis Bank</option>
+  </select>
+</div>
+<!-- CONSENT -->
+<div class="form-check mb-4">
+  <input type="checkbox"
+         name="consent"
+         value="yes"
+         class="form-check-input"
+         required>
+
+
+         
+  <label class="form-check-label">
+    I authorize the lender to verify my details and check my credit score.
+  </label>
+</div>
+
+<button type="submit" class="btn btn-primary w-100">
+  Submit Personal Loan Application
+</button>
+
+</form>
+
+</div>
+</div>
+
+
+</div>
+
+</body>
+</html>
